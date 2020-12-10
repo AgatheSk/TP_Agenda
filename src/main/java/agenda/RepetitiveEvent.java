@@ -8,6 +8,9 @@ import java.time.temporal.ChronoUnit;
  * Description : A repetitive Event
  */
 public class RepetitiveEvent extends Event {
+    ChronoUnit myFrequency;
+    Set<LocalDate> myExceptions = new TreeSet<>();
+    
     /**
      * Constructs a repetitive event
      *
@@ -23,8 +26,7 @@ public class RepetitiveEvent extends Event {
      */
     public RepetitiveEvent(String title, LocalDateTime start, Duration duration, ChronoUnit frequency) {
         super(title, start, duration);
-        // TODO : implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");
+        this.myFrequency=frequency;
     }
 
     /**
@@ -33,17 +35,32 @@ public class RepetitiveEvent extends Event {
      * @param date the event will not occur at this date
      */
     public void addException(LocalDate date) {
-        // TODO : implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");
+        this.myExceptions.add(date);
     }
 
+    @Override
+    public boolean isInDay(LocalDate aDay) {
+        if(this.myExceptions.contains(aDay))
+            return false;
+        switch(this.myFrequency){
+            case DAYS:
+                return ( aDay.isEqual(this.getStart().toLocalDate())) ||((aDay.isAfter(this.getStart().toLocalDate())));
+            case WEEKS:
+               return ( ( aDay.isEqual(this.getStart().toLocalDate())) ||((aDay.isAfter(this.getStart().toLocalDate()))) && (aDay.getDayOfWeek()==this.getStart().getDayOfWeek()));
+            case MONTHS:
+                return ( ( aDay.isEqual(this.getStart().toLocalDate())) ||((aDay.isAfter(this.getStart().toLocalDate()))) && (aDay.getDayOfMonth()==this.getStart().getDayOfMonth()));
+            default:
+                return false;
+        }
+        
+    }
+     
     /**
      *
      * @return the type of repetition
      */
     public ChronoUnit getFrequency() {
-        // TODO : implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");    
+        return myFrequency;
     }
 
 }
